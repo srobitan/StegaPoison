@@ -1,0 +1,197 @@
+# 🛡️ StegaPoison & Embedding Consistency Filtering (ECF)
+
+This repository contains the complete implementation of **StegaPoison** (an untargeted stealthy poisoning attack against federated recommendation systems) and **Embedding Consistency Filtering (ECF)** (a defense mechanism against embedding poisoning attacks in federated recommendation).
+
+---
+
+## 📌 Overview
+
+Federated Recommendation Systems (FRS) enable collaborative model training across decentralized user clients while keeping personal interaction data local. However, FRS remains vulnerable to malicious clients injecting poisoned updates into item embeddings.
+
+- **StegaPoison Attack**: Injects watermarked, stealthy updates using Mirror Shift, Low-Variance Dimension Embedding Perturbation (LVDEP), Velocity-Based Sampling with Momentum, and Statistical Invisibility constraints.
+- **ECF Defense**: Detects and mitigates stealthy poisoning attacks using Temporal Embedding Drift Monitoring (TEDM), Interdimensional Consistency Checks (IDC), and Compatibility Drop Estimation (CDE).
+
+---
+
+## 📂 Repository Structure
+
+```
+.
+├── Data/                       # Datasets & data preparation scripts
+│   ├── prepare.sh              # Shell script to download and process datasets
+│   ├── ml-1m/                  # MovieLens-1M dataset files
+│   ├── gowalla_10core.tsv      # Preprocessed Gowalla dataset
+│   ├── item_list.txt           # Item mapping
+│   └── user_list.txt           # User mapping
+├── code/                       # Source code directory
+│   ├── train.py                # Single experiment training script
+│   ├── train_all.py            # Batch script to run full training suite
+│   ├── test.py                 # Single experiment evaluation script
+│   ├── eval_all.py             # Batch evaluation script for all trained checkpoints
+│   ├── orchestra.py            # Main federated orchestration loop
+│   ├── client.py               # Benign client and local training logic
+│   ├── model.py                # Model architectures (MF, SASRec)
+│   ├── dataset.py              # PyTorch Dataset utilities
+│   ├── agg.py                  # Aggregation & Defense algorithms (FedAdam, ECF, Krum, etc.)
+│   ├── utils.py                # Helper utilities and vector operations
+│   ├── verify_stegapoison_math.py # Unit test for StegaPoison attack formulation
+│   ├── verify_ecf.py           # Unit test for ECF defense formulation
+│   └── attacker/               # Attacker implementations
+│       ├── stegapoison.py      # Fixed, un-decaying StegaPoison implementation
+│       └── kmeans.py           # Clustering helpers for attack initialization
+├── docs/                       # Research papers and technical reports
+│   ├── papers/                 # PDFs of reference papers & architecture diagrams
+│   └── reports/                # Technical diagnosis, fix guides, and benchmark analysis
+├── test_fixed_version.sh       # Automated verification and quick-test script
+└── README.md                   # Project documentation
+```
+
+---
+
+## ⚙️ Requirements & Installation
+
+### 1. Environment Setup
+
+Python 3.8+ and PyTorch 1.12+ (or PyTorch 2.0+) are required.
+
+```bash
+# Clone the repository
+git clone https://github.com/srobitan/StegaPoison.git
+cd StegaPoison
+
+# Install dependencies
+pip install torch numpy scipy tqdm
+```
+
+### 2. Prepare Datasets
+
+Run the automated data preparation script to download MovieLens-1M and raw Gowalla check-in data:
+
+```bash
+cd Data
+bash prepare.sh
+cd ..
+```
+
+---
+
+## 🚀 How to Run Full Training
+
+### Option A: Run a Single Training Experiment
+
+To train a specific combination of dataset, model architecture, and defense aggregator (e.g., Matrix Factorization on MovieLens-1M with ECF defense):
+
+```bash
+cd code
+
+python3 train.py \
+    --EXP_NAME train6000_ml_MF_stegapoison_ECF \
+    --MODEL_TYPE MF \
+    --DATA ml \
+    --SEED 0 \
+    --AGG_TYPE ECF \
+    --ATTACKER_RATIO 0.05 \
+    --ATTACKER_STRAT StegaPoison \
+    --MAX_ROUND 6000 \
+    --SAVE_ROUND 200 \
+    --LOG_ROUND 100 \
+    --LR 2e-3 \
+    --SCALE 1.0
+```
+
+#### Key Arguments:
+- `--MODEL_TYPE`: Backbone model (`MF` or `SASRec`).
+- `--DATA`: Dataset (`ml` for MovieLens-1M, `gowalla` for Gowalla 10-core).
+- `--AGG_TYPE`: Aggregation / Defense strategy (`FedAdam`, `TrimmedMean`, `Krum`, `MultiKrum`, `NormBound`, `FLWBC`, `ECF`).
+- `--ATTACKER_RATIO`: Ratio of malicious clients (default: `0.05` for 5%).
+- `--ATTACKER_STRAT`: Attack strategy (`StegaPoison`, `Random`, etc.).
+- `--MAX_ROUND`: Total federated communication rounds (e.g., `6000`).
+- `--SAVE_ROUND`: Interval rounds at which model checkpoints are saved.
+
+---
+
+### Option B: Run Full Training Suite (All Aggregators & Models)
+
+To run the complete benchmark suite across datasets (`ml`, `gowalla`), backbones (`MF`, `SASRec`), and all defense aggregators:
+
+```bash
+cd code
+
+python3 train_all.py --MAX_ROUND 6000
+```
+
+*Note: Logs will be saved automatically to `logs/` and checkpoints to `model_all/`.*
+
+---
+
+## 📊 How to Test & Evaluate Models
+
+### Option A: Evaluate a Single Experiment
+
+After training completes, evaluate top-K recommendation metrics (HR@5, nDCG@5, HR@10, nDCG@10, HR@20, nDCG@20) across all saved checkpoints:
+
+```bash
+cd code
+
+python3 test.py \
+    --EXP_NAME train6000_ml_MF_stegapoison_ECF \
+    --MODEL_TYPE MF \
+    --DATA ml \
+    --SEED 0 \
+    --MAX_ROUND 6000 \
+    --SAVE_ROUND 200
+```
+
+### Option B: Evaluate All Trained Checkpoints
+
+To evaluate every trained model run in `model_all/` and generate a summary report:
+
+```bash
+cd code
+
+python3 eval_all.py --MAX_ROUND 6000
+```
+
+---
+
+## 🧪 Mathematical Unit Testing & Soundness Verification
+
+You can verify the mathematical correctness of both the StegaPoison attack formulation and the ECF defense algorithm using the included unit tests:
+
+```bash
+# Verify StegaPoison attack formulation (Watermarking, LVDEP, Mirror Shift)
+python3 code/verify_stegapoison_math.py
+
+# Verify ECF defense mechanism (TEDM, IDC, CDE tracking)
+python3 code/verify_ecf.py
+```
+
+---
+
+## ⚡ Quick Test Script
+
+To run a fast 200-round validation test and verify that attack decay does not occur:
+
+```bash
+./test_fixed_version.sh
+```
+
+---
+
+## 🛡️ Supported Defense Aggregators
+
+| Aggregator Name | Description |
+| :--- | :--- |
+| `FedAdam` | Standard Server Adam Optimization (Un-defended baseline) |
+| `TrimmedMean` | Trims top & bottom updates per dimension |
+| `Krum` | Distance-based robust aggregation |
+| `MultiKrum` | Multi-selection variant of Krum |
+| `NormBound` | Gradient norm clipping defense |
+| `FLWBC` | Federated learning with bounding constraints |
+| `ECF` | **Embedding Consistency Filtering** (Temporal Drift + Interdimensional Consistency + Compatibility Drop) |
+
+---
+
+## 📄 License & References
+
+This project is licensed under the MIT License. Detailed technical reports and original research PDFs are available in the [`docs/`](file:///Users/apple/Downloads/StegaPoison/docs/) directory.

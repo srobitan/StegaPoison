@@ -1,0 +1,35 @@
+# Python & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# OS & IDE Settings
+.DS_Store
+.vscode/
+.idea/
+*.swp
+.freebuff/
+
+# Raw Datasets & Binary Zip files
+loc-gowalla_totalCheckins.txt
+loc-gowalla_totalCheckins.txt.gz
+*.zip
+
+# Generated Caches & Artifacts
+CacheData/
+model_all/
+*.pt
+*.pth
+*.ckpt
+
+# Output Logs & Temp Results
+logs/
+*.log
+code/results/eval_cache.json
+
+# Virtual Environments & Packages
+*.whl
+venv/
+env/
+.venv/
