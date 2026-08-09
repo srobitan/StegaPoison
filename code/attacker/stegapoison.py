@@ -1,16 +1,3 @@
-"""
-StegaPoison: FIXED Implementation - Version 2
-** CRITICAL BUGS FIXED **
-
-Fixed Issues:
-1. ✅ Delta computation now uses CURRENT model (Θ^(r-1)) instead of initial model (Θ^(0))
-2. ✅ Momentum accumulation properly implemented and used
-3. ✅ Statistical invisibility recalibrated for better stealth
-4. ✅ Base scale reduced from 3.0 to 1.0 to avoid over-amplification
-
-This version should maintain attack effectiveness across all training rounds (no decay).
-"""
-
 import math
 import random
 import torch
