@@ -37,9 +37,6 @@ Federated Recommendation Systems (FRS) enable collaborative model training acros
 │   └── attacker/               # Attacker implementations
 │       ├── stegapoison.py      # Fixed, un-decaying StegaPoison implementation
 │       └── kmeans.py           # Clustering helpers for attack initialization
-├── docs/                       # Research papers and technical reports
-│   ├── papers/                 # PDFs of reference papers
-│   └── reports/                # Technical diagnosis, fix guides, and benchmark analysis
 ├── test_fixed_version.sh       # Automated verification and quick-test script
 └── README.md                   # Project documentation
 ```
@@ -108,21 +105,7 @@ python3 train.py \
 
 ---
 
-### Option B: Run Full Training Suite (All Aggregators & Models)
-
-To run the complete benchmark suite across datasets (`ml`, `gowalla`), backbones (`MF`, `SASRec`), and all defense aggregators:
-
-```bash
-cd code
-
-python3 train_all.py --MAX_ROUND 6000
-```
-
-*Note: Logs will be saved automatically to `logs/` and checkpoints to `model_all/`.*
-
----
-
-## 📊 How to Test & Evaluate Models
+## 📋 How to Test & Evaluate Models
 
 ### Option A: Evaluate a Single Experiment
 
@@ -188,6 +171,6 @@ To run a fast 200-round validation test and verify that attack decay does not oc
 
 ---
 
-## 📄 License & References
+## 📄 License
 
-This project is licensed under the MIT License. Detailed technical reports and research papers are available in the [`docs/`](file:///Users/apple/Downloads/StegaPoison/docs/) directory.
+This project is licensed under the MIT License.
