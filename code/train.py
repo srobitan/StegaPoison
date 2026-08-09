@@ -31,7 +31,7 @@ def parse_args():
     parser.add_argument(
         "--AGG_TYPE",
         type=str,
-        choices=["FedAdam", "TrimmedMean", "Krum", "MultiKrum", "NormBound", "FLWBC", "MultiKrumUNION", "NormBoundUNION", "ECF"],
+        choices=["FedAdam", "TrimmedMean", "Krum", "MultiKrum", "NormBound", "FLWBC", "MultiKrumUNION", "NormBoundUNION"],
         default="FedAdam",
     )
     parser.add_argument("--ATTACKER_RATIO", type=float, default=0)
@@ -78,14 +78,6 @@ def parse_args():
     parser.add_argument("--MOMENTUM", type=float, default=0.8, help="Momentum for velocity-based sampling (0 = disabled)")
     parser.add_argument("--STEALTH_FACTOR", type=float, default=1.5, help="Stealth clipping standard deviation margin (higher = relaxed constraint)")
     parser.add_argument("--DEVICE", type=str, default="auto", choices=["auto", "cpu", "cuda", "mps"], help="Device to use for training (auto/cpu/cuda/mps)")
-    
-    # ECF hyperparameters
-    parser.add_argument("--ECF_K", type=float, default=1.5, help="Temporal Embedding Drift Monitoring (TEDM) sensitivity k")
-    parser.add_argument("--ECF_GAMMA_TEDM", type=float, default=1.0, help="TEDM soft score exponential scaling factor gamma")
-    parser.add_argument("--ECF_BINS_IDC", type=int, default=20, help="Interdimensional Consistency Check (IDC) histogram bins")
-    parser.add_argument("--ECF_TAU_IDC", type=float, default=2.0, help="IDC threshold tau")
-    parser.add_argument("--ECF_ALPHA_IDC", type=float, default=2.0, help="IDC scaling alpha")
-    parser.add_argument("--ECF_LAMBDA_CDE", type=float, default=10.0, help="Compatibility Drop Estimator (CDE) scaling lambda")
 
     args = parser.parse_args()
     args.MODEL_DIR = f"../model_all/{args.EXP_NAME}/seed{args.SEED}"

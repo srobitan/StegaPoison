@@ -1,6 +1,6 @@
-# 🛡️ StegaPoison: Comprehensive Defense Mechanism Evaluation Report (Round 6000)
+# 🛡️ StegaPoison: Defense Mechanism Evaluation Report (Round 6000)
 
-This report presents a unified, side-by-side performance evaluation of the **Embedding Consistency Filtering (ECF)** defense mechanism compared against standard federated recommendation defense strategies under the **StegaPoison** attack.
+This report presents a unified, side-by-side performance evaluation of federated recommendation defense strategies under the **StegaPoison** attack.
 
 ## 📊 Gowalla - MF Recommender
 
@@ -14,7 +14,6 @@ This report presents a unified, side-by-side performance evaluation of the **Emb
 | `NormBound` | 0.02348 | 0.01645 | 0.03525 | 0.02023 | 0.02105 | 0.01416 | 0.03222 | 0.01778 |
 | `NormBoundUNION` | 0.02542 | 0.01769 | 0.03829 | 0.02181 | 0.02302 | 0.01527 | 0.03458 | 0.01899 |
 | `TrimmedMean` | 0.01424 | 0.00956 | 0.02031 | 0.01151 | 0.01266 | 0.00823 | 0.01893 | 0.01025 |
-| **🌟 ECF (Ours)** | 0.02507 | 0.01755 | 0.03688 | 0.02132 | 0.02196 | 0.01504 | 0.03465 | 0.01911 |
 
 ## 📊 Gowalla - SASRec Recommender
 
@@ -28,7 +27,6 @@ This report presents a unified, side-by-side performance evaluation of the **Emb
 | `NormBound` | 0.01798 | 0.01230 | 0.02528 | 0.01466 | 0.01622 | 0.01059 | 0.02256 | 0.01264 |
 | `NormBoundUNION` | 0.02344 | 0.01605 | 0.03522 | 0.01983 | 0.02045 | 0.01361 | 0.03261 | 0.01750 |
 | `TrimmedMean` | 0.01121 | 0.00745 | 0.01650 | 0.00915 | 0.00959 | 0.00624 | 0.01417 | 0.00772 |
-| **🌟 ECF (Ours)** | 0.01907 | 0.01320 | 0.02644 | 0.01559 | 0.01685 | 0.01132 | 0.02337 | 0.01342 |
 
 ## 📊 MovieLens-1M - MF Recommender
 
@@ -42,7 +40,6 @@ This report presents a unified, side-by-side performance evaluation of the **Emb
 | `NormBound` | 0.03294 | 0.02070 | 0.05699 | 0.02839 | 0.02963 | 0.01859 | 0.05141 | 0.02556 |
 | `NormBoundUNION` | 0.03032 | 0.01913 | 0.05176 | 0.02602 | 0.03137 | 0.01953 | 0.04915 | 0.02519 |
 | `TrimmedMean` | 0.02475 | 0.01519 | 0.04514 | 0.02172 | 0.02022 | 0.01294 | 0.03782 | 0.01859 |
-| **🌟 ECF (Ours)** | 0.03276 | 0.02061 | 0.05751 | 0.02855 | 0.02963 | 0.01856 | 0.04949 | 0.02493 |
 
 ## 📊 MovieLens-1M - SASRec Recommender
 
@@ -56,5 +53,3 @@ This report presents a unified, side-by-side performance evaluation of the **Emb
 | `NormBound` | 0.02248 | 0.01468 | 0.04217 | 0.02102 | 0.02039 | 0.01271 | 0.03660 | 0.01789 |
 | `NormBoundUNION` | 0.02318 | 0.01432 | 0.04427 | 0.02103 | 0.02231 | 0.01379 | 0.04270 | 0.02028 |
 | `TrimmedMean` | 0.02266 | 0.01403 | 0.04427 | 0.02083 | 0.02126 | 0.01299 | 0.03573 | 0.01762 |
-| **🌟 ECF (Ours)** | 0.02300 | 0.01487 | 0.04339 | 0.02138 | 0.02022 | 0.01269 | 0.03573 | 0.01766 |
-

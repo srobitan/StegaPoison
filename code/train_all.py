@@ -12,8 +12,8 @@ def parse_args():
         "--AGG_TYPE", 
         type=str, 
         nargs="+", 
-        default=["FedAdam", "TrimmedMean", "Krum", "MultiKrum", "NormBound", "FLWBC", "MultiKrumUNION", "NormBoundUNION", "ECF"],
-        choices=["FedAdam", "TrimmedMean", "Krum", "MultiKrum", "NormBound", "FLWBC", "MultiKrumUNION", "NormBoundUNION", "ECF"]
+        default=["FedAdam", "TrimmedMean", "Krum", "MultiKrum", "NormBound", "FLWBC", "MultiKrumUNION", "NormBoundUNION"],
+        choices=["FedAdam", "TrimmedMean", "Krum", "MultiKrum", "NormBound", "FLWBC", "MultiKrumUNION", "NormBoundUNION"]
     )
     parser.add_argument("--MAX_ROUND", type=int, default=6000)
     parser.add_argument("--SAVE_ROUND", type=int, default=200)

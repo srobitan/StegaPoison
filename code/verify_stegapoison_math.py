@@ -85,9 +85,10 @@ def test_stegapoison_math():
     # ASSERTION 1: Sinusoidal Carrier Watermark Correctness
     # ----------------------------------------------------
     print("\n[Assertion 1] Verifying Sinusoidal Carrier Watermark:")
-    gamma = getattr(args, 'WATERMARK_SCALE', 0.05)
-    j = torch.arange(1, args.EMBDIM + 1, device=device, dtype=torch.float32)
-    expected_watermark = gamma * torch.sin(2.0 * math.pi * args.K * j)
+    watermark_gen = torch.Generator(device=device).manual_seed(args.SEED + 9999)
+    expected_a = torch.randn(args.EMBDIM, generator=watermark_gen, device=device) * args.WATERMARK_SCALE
+    freq_axis = torch.arange(1, args.EMBDIM + 1, device=device, dtype=torch.float32) / args.EMBDIM
+    expected_watermark = expected_a * torch.sin(2.0 * math.pi * args.K * freq_axis)
     
     watermark_diff = torch.abs(attacker.watermark_pattern - expected_watermark).max().item()
     print(f"  - Max watermark difference: {watermark_diff:.6e}")

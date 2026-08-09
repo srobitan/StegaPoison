@@ -14,8 +14,8 @@ def parse_args():
         "--AGG_TYPE", 
         type=str, 
         nargs="+", 
-        default=["FedAdam", "TrimmedMean", "Krum", "MultiKrum", "NormBound", "FLWBC", "MultiKrumUNION", "NormBoundUNION", "ECF"],
-        choices=["FedAdam", "TrimmedMean", "Krum", "MultiKrum", "NormBound", "FLWBC", "MultiKrumUNION", "NormBoundUNION", "ECF"]
+        default=["FedAdam", "TrimmedMean", "Krum", "MultiKrum", "NormBound", "FLWBC", "MultiKrumUNION", "NormBoundUNION"],
+        choices=["FedAdam", "TrimmedMean", "Krum", "MultiKrum", "NormBound", "FLWBC", "MultiKrumUNION", "NormBoundUNION"]
     )
     parser.add_argument("--MAX_ROUND", type=int, default=6000)
     parser.add_argument("--SEED", type=int, default=0)
@@ -172,8 +172,8 @@ def main():
     md_output_path = os.path.join(results_dir, f"StegaPoison_Defense_Evaluation_{args.MAX_ROUND}.md")
     
     with open(md_output_path, "w", encoding="utf-8") as md_f:
-        md_f.write(f"# 🛡️ StegaPoison: Comprehensive Defense Mechanism Evaluation Report (Round {args.MAX_ROUND})\n\n")
-        md_f.write("This report presents a unified, side-by-side performance evaluation of the **Embedding Consistency Filtering (ECF)** defense mechanism compared against standard federated recommendation defense strategies under the **StegaPoison** attack.\n\n")
+        md_f.write(f"# 🛡️ StegaPoison: Defense Mechanism Evaluation Report (Round {args.MAX_ROUND})\n\n")
+        md_f.write("This report presents a unified, side-by-side performance evaluation of federated recommendation defense strategies under the **StegaPoison** attack.\n\n")
         
         # Group results by (dataset, model)
         groups = {}
@@ -189,13 +189,11 @@ def main():
             md_f.write("| Defense Strategy | Val HR@5 | Val nDCG@5 | Val HR@10 | Val nDCG@10 | Test HR@5 | Test nDCG@5 | Test HR@10 | Test nDCG@10 |\n")
             md_f.write("| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |\n")
             
-            # Sort group: FedAdam first, then alphabetically, but ECF last or highlighted
+            # Sort group: FedAdam first, then alphabetically
             def sort_key(item):
                 def_name = item["defense"]
                 if def_name == "FedAdam":
                     return "0_FedAdam"
-                elif def_name == "ECF":
-                    return "2_ECF"
                 else:
                     return f"1_{def_name}"
                     
@@ -206,11 +204,7 @@ def main():
                 v = item["val"]
                 t = item["test"]
                 
-                # Highlight ECF in bold/gold style
-                name_str = f"**🌟 ECF (Ours)**" if def_name == "ECF" else f"`{def_name}`"
-                if def_name == "FedAdam":
-                    name_str = f"`FedAdam` (No Defense)"
-                    
+                name_str = f"`FedAdam` (No Defense)" if def_name == "FedAdam" else f"`{def_name}`"
                 md_f.write(f"| {name_str} | {v['HR5']:.5f} | {v['nDCG5']:.5f} | {v['HR10']:.5f} | {v['nDCG10']:.5f} | {t['HR5']:.5f} | {t['nDCG5']:.5f} | {t['HR10']:.5f} | {t['nDCG10']:.5f} |\n")
             md_f.write("\n")
             

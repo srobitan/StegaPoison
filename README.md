@@ -1,6 +1,6 @@
-# 🛡️ StegaPoison & Embedding Consistency Filtering (ECF)
+# 🛡️ StegaPoison: Stealthy Untargeted Poisoning Attack in Federated Recommendation Systems
 
-This repository contains the complete implementation of **StegaPoison** (an untargeted stealthy poisoning attack against federated recommendation systems) and **Embedding Consistency Filtering (ECF)** (a defense mechanism against embedding poisoning attacks in federated recommendation).
+This repository contains the complete implementation of **StegaPoison** (an untargeted stealthy poisoning attack against federated recommendation systems) evaluated against standard federated recommendation defense strategies.
 
 ---
 
@@ -8,8 +8,7 @@ This repository contains the complete implementation of **StegaPoison** (an unta
 
 Federated Recommendation Systems (FRS) enable collaborative model training across decentralized user clients while keeping personal interaction data local. However, FRS remains vulnerable to malicious clients injecting poisoned updates into item embeddings.
 
-- **StegaPoison Attack**: Injects watermarked, stealthy updates using Mirror Shift, Low-Variance Dimension Embedding Perturbation (LVDEP), Velocity-Based Sampling with Momentum, and Statistical Invisibility constraints.
-- **ECF Defense**: Detects and mitigates stealthy poisoning attacks using Temporal Embedding Drift Monitoring (TEDM), Interdimensional Consistency Checks (IDC), and Compatibility Drop Estimation (CDE).
+- **StegaPoison Attack**: Injects watermarked, stealthy updates using Mirror Shift, Low-Variance Dimension Embedding Perturbation (LVDEP), Velocity-Based Sampling with Momentum, and Statistical Invisibility constraints to maximize attack efficacy across training rounds without decaying.
 
 ---
 
@@ -32,15 +31,14 @@ Federated Recommendation Systems (FRS) enable collaborative model training acros
 │   ├── client.py               # Benign client and local training logic
 │   ├── model.py                # Model architectures (MF, SASRec)
 │   ├── dataset.py              # PyTorch Dataset utilities
-│   ├── agg.py                  # Aggregation & Defense algorithms (FedAdam, ECF, Krum, etc.)
+│   ├── agg.py                  # Aggregation & Defense algorithms (FedAdam, Krum, TrimmedMean, etc.)
 │   ├── utils.py                # Helper utilities and vector operations
 │   ├── verify_stegapoison_math.py # Unit test for StegaPoison attack formulation
-│   ├── verify_ecf.py           # Unit test for ECF defense formulation
 │   └── attacker/               # Attacker implementations
 │       ├── stegapoison.py      # Fixed, un-decaying StegaPoison implementation
 │       └── kmeans.py           # Clustering helpers for attack initialization
 ├── docs/                       # Research papers and technical reports
-│   ├── papers/                 # PDFs of reference papers & architecture diagrams
+│   ├── papers/                 # PDFs of reference papers
 │   └── reports/                # Technical diagnosis, fix guides, and benchmark analysis
 ├── test_fixed_version.sh       # Automated verification and quick-test script
 └── README.md                   # Project documentation
@@ -79,17 +77,17 @@ cd ..
 
 ### Option A: Run a Single Training Experiment
 
-To train a specific combination of dataset, model architecture, and defense aggregator (e.g., Matrix Factorization on MovieLens-1M with ECF defense):
+To train a specific combination of dataset, model architecture, and defense aggregator (e.g., Matrix Factorization on MovieLens-1M with FedAdam):
 
 ```bash
 cd code
 
 python3 train.py \
-    --EXP_NAME train6000_ml_MF_stegapoison_ECF \
+    --EXP_NAME train6000_ml_MF_stegapoison_FedAdam \
     --MODEL_TYPE MF \
     --DATA ml \
     --SEED 0 \
-    --AGG_TYPE ECF \
+    --AGG_TYPE FedAdam \
     --ATTACKER_RATIO 0.05 \
     --ATTACKER_STRAT StegaPoison \
     --MAX_ROUND 6000 \
@@ -102,9 +100,9 @@ python3 train.py \
 #### Key Arguments:
 - `--MODEL_TYPE`: Backbone model (`MF` or `SASRec`).
 - `--DATA`: Dataset (`ml` for MovieLens-1M, `gowalla` for Gowalla 10-core).
-- `--AGG_TYPE`: Aggregation / Defense strategy (`FedAdam`, `TrimmedMean`, `Krum`, `MultiKrum`, `NormBound`, `FLWBC`, `ECF`).
+- `--AGG_TYPE`: Aggregation / Defense strategy (`FedAdam`, `TrimmedMean`, `Krum`, `MultiKrum`, `NormBound`, `FLWBC`, `MultiKrumUNION`, `NormBoundUNION`).
 - `--ATTACKER_RATIO`: Ratio of malicious clients (default: `0.05` for 5%).
-- `--ATTACKER_STRAT`: Attack strategy (`StegaPoison`, `Random`, etc.).
+- `--ATTACKER_STRAT`: Attack strategy (`StegaPoison`).
 - `--MAX_ROUND`: Total federated communication rounds (e.g., `6000`).
 - `--SAVE_ROUND`: Interval rounds at which model checkpoints are saved.
 
@@ -134,7 +132,7 @@ After training completes, evaluate top-K recommendation metrics (HR@5, nDCG@5, H
 cd code
 
 python3 test.py \
-    --EXP_NAME train6000_ml_MF_stegapoison_ECF \
+    --EXP_NAME train6000_ml_MF_stegapoison_FedAdam \
     --MODEL_TYPE MF \
     --DATA ml \
     --SEED 0 \
@@ -156,14 +154,11 @@ python3 eval_all.py --MAX_ROUND 6000
 
 ## 🧪 Mathematical Unit Testing & Soundness Verification
 
-You can verify the mathematical correctness of both the StegaPoison attack formulation and the ECF defense algorithm using the included unit tests:
+You can verify the mathematical correctness of the StegaPoison attack formulation using the included unit test:
 
 ```bash
-# Verify StegaPoison attack formulation (Watermarking, LVDEP, Mirror Shift)
+# Verify StegaPoison attack formulation (Watermarking, LVDEP, Mirror Shift, Momentum Velocity)
 python3 code/verify_stegapoison_math.py
-
-# Verify ECF defense mechanism (TEDM, IDC, CDE tracking)
-python3 code/verify_ecf.py
 ```
 
 ---
@@ -186,12 +181,13 @@ To run a fast 200-round validation test and verify that attack decay does not oc
 | `TrimmedMean` | Trims top & bottom updates per dimension |
 | `Krum` | Distance-based robust aggregation |
 | `MultiKrum` | Multi-selection variant of Krum |
+| `MultiKrumUNION` | Union selection variant of MultiKrum |
 | `NormBound` | Gradient norm clipping defense |
+| `NormBoundUNION` | Union variant of NormBound defense |
 | `FLWBC` | Federated learning with bounding constraints |
-| `ECF` | **Embedding Consistency Filtering** (Temporal Drift + Interdimensional Consistency + Compatibility Drop) |
 
 ---
 
 ## 📄 License & References
 
-This project is licensed under the MIT License. Detailed technical reports and original research PDFs are available in the [`docs/`](file:///Users/apple/Downloads/StegaPoison/docs/) directory.
+This project is licensed under the MIT License. Detailed technical reports and research papers are available in the [`docs/`](file:///Users/apple/Downloads/StegaPoison/docs/) directory.
