@@ -1,4 +1,4 @@
-# 🛡️ StegaPoison: A Steganography-Inspired Untargeted Attack On Federated Recommendation Systems
+# 🛡️ StegaPoison: A Steganography-Inspired Untargeted Attack On Federated Recommender Systems
 
 This repository contains the complete implementation of **StegaPoison** (an untargeted stealthy poisoning attack against federated recommendation systems) evaluated against standard federated recommendation defense strategies.
 
